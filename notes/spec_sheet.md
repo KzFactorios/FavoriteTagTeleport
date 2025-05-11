@@ -68,6 +68,7 @@ A Factorio mod that enhances map tag management and teleportation, providing a f
 This is just my first stab at structure. If you see a better way, please feel free to chime in
   ```lua
   storage = {
+    mod_version = 0.0.01,
     
     players = {
       [player_index] = {
@@ -135,6 +136,7 @@ This is just my first stab at structure. If you see a better way, please feel fr
 - **Event Handler Centralization:** All custom input and GUI events are handled in dedicated modules.
 - **Debug Logging:** Conditional debug logging using `context.__DEBUG`.
 - try to keep files sizes as small as possible even if it means creating other files for better organization and readability
+- remove any references to qmtt or qmt. It will be preferred to prepend "ftt_" to variables or functions if necessary
 
 ---
 
