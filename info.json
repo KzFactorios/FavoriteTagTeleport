@@ -1,0 +1,13 @@
+{
+  "name": "FaveTeleport",
+  "version": "0.0.01",
+  "title": "Fave Teleport",
+  "author": "kurtzilla",
+  "license": "MIT",
+  "created": "2025-05-10",
+  "factorio_version": "2.0",
+  "dependencies": [
+    "base >= 2.0.32"
+  ],
+  "description": "User-defined Favorite/Hotkey locations that you can teleport to\n\nTired of walking and running your game-time-life away? Can't fathom driving a car around your map, avoiding cliffs and lakes? Do you just want to get there already?\n\nWhat if you could simply open a dialog by **right-clicking** on the map view and teleport immediately to that location?\n\n**right-click** and create your tag and mark it as a favorite. That's it!"
+}
