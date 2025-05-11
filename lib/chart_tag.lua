@@ -9,7 +9,7 @@
 local ChartTag = {}
 
 --- Returns the pos_string representation of the map_position
-function ChartTag:pos_string()
+function ChartTag:get_pos_string()
   local helpers = require("lib.data_helpers")
   return helpers.map_position_to_pos_string(self.map_position)
 end
