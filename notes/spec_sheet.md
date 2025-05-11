@@ -65,7 +65,9 @@ A Factorio mod that enhances map tag management and teleportation, providing a f
 - **All persistent data is managed via the `context` module.**
 - The storage schema is player-centric and surface-aware, supporting multiplayer and multiple surfaces.
 - **Typical structure:**
-This is just my first stab at structure. If you see a better way, please feel free to chime in
+This is just my first stab at structure. If you see a better way, please feel free to chime in.
+Chart_tag is a structure that is returned from the call player.force.find_chart_tags(player.physical_surface_index). Use the same structure/fields for our chart_tags as returned by  that call.
+ext_tag does not need created_at or last_modified fields. See https://lua-api.factorio.com/stable/classes/LuaCustomChartTag.html for the structure of a chart_tag
   ```lua
   storage = {
     mod_version = 0.0.01,
@@ -136,7 +138,7 @@ This is just my first stab at structure. If you see a better way, please feel fr
 - **Event Handler Centralization:** All custom input and GUI events are handled in dedicated modules.
 - **Debug Logging:** Conditional debug logging using `context.__DEBUG`.
 - try to keep files sizes as small as possible even if it means creating other files for better organization and readability
-- remove any references to qmtt or qmt. It will be preferred to prepend "ftt_" to variables or functions if necessary
+- remove any references to qmtt or qmt. It will be preferred to prepend "ftt_" to variables or functions ONLY IF NECESSARY
 
 ---
 
@@ -185,7 +187,7 @@ All communication to the user should be handled via game.print
 
 - this project will be debugged in vscode
 
-- if it is not possible to teleport, the reason should be sohwn in the chat log
+- if it is not possible to teleport, the reason should be shown in the chat log
 
 ## mod settings
 - we should have settings - per-player
