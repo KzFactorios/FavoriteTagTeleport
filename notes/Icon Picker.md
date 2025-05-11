@@ -18,6 +18,40 @@ A dynamically populated list of icons displayed as sprite-buttons. Icons are dis
 
 When an icon is selected, its rich text tag (e.g., [img=item/iron-plate]) is appended to the text-box text. Cleanup:
 
-The icon picker frame is closed after an icon is selected. Customization Options Dynamic Icon Lists: Populate the list of icons from game.item_prototypes, game.virtual_signal_prototypes, or game.fluid_prototypes to include all available icons dynamically. Searchable Picker: Add a text-box above the icon grid to filter icons by name. Custom Categories: Separate icons into tabs or groups for better organization. Example of Dynamic Icon List To dynamically populate all item icons:
+The icon picker frame is closed after an icon is selected. Customization Options Dynamic Icon Lists: Populate the list of icons from game.item_prototypes, game.virtual_signal_prototypes, or game.fluid_prototypes to include all available icons dynamically. 
+Searchable Picker: Add a text-box above the icon grid to filter icons by name. 
+Custom Categories: Separate icons into tabs or groups for better organization. Example of Dynamic Icon List To dynamically populate all item icons:
 
 lua Copy code for name, prototype in pairs(game.item_prototypes) do scroll_pane.add{ type = "sprite-button", name = "icon_picker_" .. name, sprite = "item/" .. name, tooltip = name } end This approach provides a complete replication of the chart tag editor's icon functionality.
+
+
+I need to find out how best to save the inline image data and am open to suggestion.
+
+Icons path's will be validated, in part, with similar to the following logic.
+```lua
+
+function format_sprite_path(type, name, is_signal)
+    -- TODO what to do if type is signal?
+    if not name then name = "" end
+    if not type then type = "" end
+
+    if type == "" and not is_signal then type = "item" end
+    if type == "virtual" then
+        type = "virtual-signal"
+    end
+    if type ~= "" then
+        type = type .. "/"
+    end
+
+    local sprite_path = type .. name
+    if not helpers.is_valid_sprite_path(sprite_path) then
+        -- TODO better user messaging on error
+        return ""
+    end
+
+    return sprite_path
+end
+
+```
+
+use the generic_marker.png in place of missing icons

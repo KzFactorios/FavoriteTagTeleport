@@ -27,3 +27,17 @@ if is_valid then
 else
   player.print("Cannot teleport to that location; no valid platform!")
 end
+
+
+```lua
+--- evaluates player surface and determines if player is in space
+function map_tag_utils.is_on_space_platform(player)
+  if not player then return false end
+  if not player.surface then return false end
+  if not player.surface.map_gen_settings then return false end
+
+  -- Planets have either default/custom terrain gen or specific planet presets
+  local map_gen = player.surface.map_gen_settings
+  return map_gen.preset == "space-platform" or map_gen.preset == "space"
+end
+```
