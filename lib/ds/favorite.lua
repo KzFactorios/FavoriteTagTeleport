@@ -56,4 +56,11 @@ function Favorite:get_display_description(surface_data)
   return ext_tag and ext_tag.display_description or nil
 end
 
+--- Validates a Favorite instance
+---@param favorite Favorite
+---@return boolean
+function Favorite.validate(favorite)
+  return type(favorite) == "table" and type(favorite.pos_string) == "string"
+end
+
 return Favorite

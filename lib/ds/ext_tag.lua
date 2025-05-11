@@ -56,4 +56,11 @@ function ExtTag:is_favorited_by_player(player_index)
   return false
 end
 
+--- Validates an ExtTag instance
+---@param ext_tag ExtTag
+---@return boolean
+function ExtTag.validate(ext_tag)
+  return type(ext_tag) == "table" and type(ext_tag.pos_string) == "string" and type(ext_tag.display_text) == "string"
+end
+
 return ExtTag

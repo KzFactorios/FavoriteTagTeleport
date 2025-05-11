@@ -14,4 +14,15 @@ function ChartTag:get_pos_string()
   return helpers.map_position_to_pos_string(self.map_position)
 end
 
+--- Validates a ChartTag instance
+---@param chart_tag ChartTag
+---@return boolean
+function ChartTag.validate(chart_tag)
+  return type(chart_tag) == "table"
+    and type(chart_tag.map_position) == "table"
+    and type(chart_tag.map_position.x) == "number"
+    and type(chart_tag.map_position.y) == "number"
+    and type(chart_tag.text) == "string"
+end
+
 return ChartTag
