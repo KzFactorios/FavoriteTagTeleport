@@ -1,6 +1,6 @@
 local constants = {}
 
-constants.PREFIX = "quick-map-tag_"
+constants.PREFIX = "ftt_"
 local PRE = constants.PREFIX
 
 constants.events = {

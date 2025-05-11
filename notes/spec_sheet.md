@@ -140,6 +140,9 @@ ext_tag does not need created_at or last_modified fields. See https://lua-api.fa
 - try to keep files sizes as small as possible even if it means creating other files for better organization and readability
 - remove any references to qmtt or qmt. It will be preferred to prepend "ftt_" to variables or functions ONLY IF NECESSARY
 
+- Annotate code using the LuaCATS/EmmyLua-style comments
+- ensure Lua Language Server extension from the VS Code is installed
+
 ---
 
 ## Extensibility
