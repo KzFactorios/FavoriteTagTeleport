@@ -29,13 +29,9 @@ local remote = remote
 ---@diagnostic disable-next-line: undefined-global
 local defines = defines
 
-local Storage = require('lib.ds.storage')
 local PlayerData = require('lib.ds.player_data')
-local SurfaceData = require('lib.ds.surface_data')
-local Favorite = require('lib.ds.favorite')
-local wutils = require('lib.wutils')
-local CommonGUI = require('gui.common_gui')
 local data_helpers = require('lib.data_helpers')
+local Context = require('lib.context')
 
 local GUI_NAMES = {
     favorites_bar = 'ftt_favorites_bar',
@@ -153,8 +149,11 @@ end
 ---@param from_slot integer
 ---@param to_slot integer
 function FavoritesGUI.reorder_favorites(player, from_slot, to_slot)
-    if not (global and global.ftt_storage and global.ftt_storage.players) then return end
-    local pdata = global.ftt_storage.players[player.index]
+    global = global or {}
+    local Context = require('lib.context')
+    local context = Context.init(global)
+    if not (context.storage and context.storage.players and context.storage.players[player.index]) then return end
+    local pdata = context.storage.players[player.index]
     if not (pdata and pdata.favorites) then return end
     if from_slot == to_slot then return end
     -- Swap or move favorite entries
@@ -163,7 +162,7 @@ function FavoritesGUI.reorder_favorites(player, from_slot, to_slot)
     -- Remove from old slot
     pdata.favorites[from_slot] = nil
     -- Shift others if needed (simple insert, not full reorder)
-    -- If destination occupied, shift right
+    -- Ensure pdata.favorites is safely accessed
     if pdata.favorites[to_slot] then
         for i = #pdata.favorites, to_slot, -1 do
             pdata.favorites[i+1] = pdata.favorites[i]
@@ -197,8 +196,10 @@ function FavoritesGUI.handle_event(event)
 
     -- Toggle button logic
     if element.name == 'ftt_favorites_toggle_btn' then
-        local player_data = global.ftt_storage.players[player.index]
-        local show = not (player_data:get_show_fave_bar_buttons())
+        local context = Context.init(global)
+        local player_data = context.storage.players[player.index]
+        if not (player_data and player_data.get_show_fave_bar_buttons and player_data.set_show_fave_bar_buttons) then return end
+        local show = not player_data:get_show_fave_bar_buttons()
         player_data:set_show_fave_bar_buttons(show)
         -- Refresh the bar to update visibility
         FavoritesGUI.open(player)

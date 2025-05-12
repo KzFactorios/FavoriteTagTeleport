@@ -94,7 +94,8 @@ local function position_can_be_tagged(position, player)
     x = math.floor(position.x / 32),
     y = math.floor(position.y / 32)
   }
-  return player.force.is_chunk_charted(player.physical_surface_index, chunk_position)
+  return player.force.is_chunk_charted(player.physical_surface_index, chunk_position) 
+    and player.force.is_chunk_visible(player.physical_surface_index, chunk_position)
 end
 
 ---@param player LuaPlayer
@@ -103,10 +104,10 @@ local function teleport_player(player, target_position)
   if not player then return nil, "" end
   if not player.character then return nil, "" end
 
-  --[[if map_tag_utils.is_on_space_platform(player) then
+  if is_on_space_platform(player) then
     return nil,
         "The surgeon general has determined that teleportation on space platforms may incur death and is not authorized!"
-  end]]
+  end
 
   --context.qmtt.player_data[player.index].render_mode = player.render_mode
   local surface = player.physical_surface
@@ -169,5 +170,5 @@ return {
   remove_ext_tag = remove_ext_tag,
   teleport_player = teleport_player,
   is_on_space_platform = is_on_space_platform,
-  position_can_be_tagged - position_can_be_tagged
+  position_can_be_tagged = position_can_be_tagged
 }

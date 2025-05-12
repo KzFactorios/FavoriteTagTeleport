@@ -55,19 +55,20 @@ local function on_runtime_mod_setting_changed(event)
     end
 end
 
-local function on_first_tick(event)
-    if _startup == 0 then
-        for _, player in pairs(game.players) do
-            if not player then break end
+local function on_first_game_tick(event)
+    if game then
+        if _startup == 0 then
+            for _, player in pairs(game.players) do
+                if not player then break end
+                --TODO what to do on startup
+            end
 
-            --TODO what to do on startup
-            --control.update_uis(player)
+            _startup = 1
+            return
         end
 
-        _startup = 1
+        script.on_event(defines.events.on_tick, nil)
     end
-
-    script.on_event(defines.events.on_tick, nil)
 end
 
 -- Player events
@@ -117,11 +118,11 @@ local function on_chart_tag_removed(event)
     --qmtt.handle_chart_tag_removal(event)
 end
 
---[[TODO decide if this is necessary to handle stock editor and/or should
-      handle mod's additions for consistency
-script.on_event(defines.events.on_chart_tag_added, function(event)
-  qmtt.handle_chart_tag_added(event)
-end)]]
+--TODO decide if this is necessary to handle stock editor and/or should
+--- handle mod's additions for consistency
+local function on_chart_tag_added(event)
+  -- TODO: ensure that a matching ext_tag is created?
+end
 
 
 local function on_chart_tag_modified(event)
@@ -138,14 +139,15 @@ script.on_init(on_init)
 script.on_load(on_load)
 script.on_configuration_changed(on_configuration_changed)
 script.on_event(defines.events.on_player_created, on_player_created)
-script.on_event(defines.events.on_player_joined_game, on_player_joined_game)
 script.on_event(defines.events.on_player_controller_changed, on_player_controller_changed)
 script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
-script.on_event(defines.events.on_tick, on_first_tick)
+script.on_event(defines.events.on_tick, on_first_game_tick)
 script.on_event(defines.events.on_player_left_game, on_player_left_game)
 script.on_event(defines.events.on_player_removed, on_player_removed)
+script.on_event(defines.events.on_chart_tag_added, on_chart_tag_added)
 script.on_event(defines.events.on_chart_tag_removed, on_chart_tag_removed)
 script.on_event(defines.events.on_chart_tag_modified, on_chart_tag_modified)
+script.on_event(defines.events.on_runtime_mod_setting_changed, on_runtime_mod_setting_changed)
 -- Register custom input events as needed
 script.on_event(defines.events.script_raised_teleported, on_teleport)
 
@@ -157,7 +159,9 @@ script.on_event(defines.events.on_gui_elem_changed, FavoritesGUI.handle_event)
 script.on_event(defines.events.on_gui_location_changed, function(event)
     local element = event.element
     if not (element and element.valid) then return end
-    if FavoritesGUI.GUI_NAMES and string.find(element.name, FavoritesGUI.GUI_NAMES.favorite_btn_prefix, 1, true) == 1 then
+
+    if FavoritesGUI.GUI_NAMES and FavoritesGUI.GUI_NAMES.favorite_btn_prefix and
+        string.find(element.name, FavoritesGUI.GUI_NAMES.favorite_btn_prefix, 1, true) == 1 then
         -- Drag-and-drop logic: update order if a favorite slot is moved
         -- (Implement order update and refresh bar)
         -- You may want to store drag state in global or player table
@@ -169,7 +173,7 @@ script.on_event(defines.events.on_gui_location_changed, function(event)
     end
 end)
 
--- set events for hotkeys
+--- TODO: set events for hotkeys
 --[[for i = 1, 10 do
   script.on_event(prototypes.custom_input[PREFIX .. "teleport-to-fave-" .. i], function(event)
     ---@diagnostic disable-next-line: undefined-field
@@ -203,11 +207,13 @@ return {
     on_player_joined_game = on_player_joined_game,
     on_player_controller_changed = on_player_controller_changed,
     on_player_changed_force = on_player_changed_force,
-    on_first_tick = on_first_tick,
+    on_first_tick = on_first_game_tick,
     on_player_left_game = on_player_left_game,
     on_player_removed = on_player_removed,
+    on_chart_tag_added = on_chart_tag_added,
     on_chart_tag_removed = on_chart_tag_removed,
     on_chart_tag_modified = on_chart_tag_modified,
     on_teleport = on_teleport,
+    on_runtime_mod_setting_changed = on_runtime_mod_setting_changed,
     debug_print = debug_print
 }

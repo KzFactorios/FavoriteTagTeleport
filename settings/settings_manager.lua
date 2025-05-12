@@ -22,7 +22,7 @@ function SettingsManager.get_player_settings(player)
         }
     end
 
-    local constants = require("constants")
+    local constants = require(settings.constants)
     local PREFIX = constants.PREFIX
 
     local t_radius = SettingsManager.TELEPORT_RADIUS_DEFAULT

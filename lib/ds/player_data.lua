@@ -4,6 +4,22 @@
 ---@field render_mode string
 local PlayerData = {}
 
+function PlayerData.new()
+    return {
+        favorites = {},
+        surfaces = {},
+        show_fave_bar_buttons = false,
+        render_mode = defines.render_mode.game,
+        remove_favorite = function() end,
+        set_show_fave_bar_buttons = function() end,
+        get_favorite_by_slot = function() end,
+        get_show_fave_bar_buttons = function() end,
+        set_render_mode = function() end,
+        get_render_mode = function() end,
+        set_favorite = function() end
+    }
+end
+
 --- Gets the favorite entry for a given slot number
 ---@param self PlayerData
 ---@param slot_number integer

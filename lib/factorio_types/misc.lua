@@ -1,4 +1,3 @@
----@class LuaForce
 ---@class LuaCustomChartTag
 ---@class LuaEvent
 ---@class LuaEntity

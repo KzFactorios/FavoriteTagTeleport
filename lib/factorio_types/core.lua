@@ -19,6 +19,10 @@
 ---@field can_place_entity fun(name: string, position: {x: number, y: number}):boolean
 ---@field find_non_colliding_position fun(name:string, center:{x:number,y:number}, radius: number, precision: number): {x:number,y:number}
 
+---@class LuaForce
+---@field is_chunk_charted fun(surface: LuaSurface, position:{x:number,y:number}):boolean
+---@field is_chunk_visible fun(surface: LuaSurface, position:{x:number,y:number}):boolean
+
 ---@class LuaRemote
 ---@field call fun(self: LuaRemote, interface: string, method: string, ...: any): any
 ---@field interfaces table<string, table<string, function>>
