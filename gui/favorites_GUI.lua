@@ -18,12 +18,24 @@ local FavoritesGUI = {}
     - Use common GUI helpers from common_gui.lua
 ]]
 
+---@diagnostic disable-next-line: undefined-global
+local global = global
+---@diagnostic disable-next-line: undefined-global
+local settings = settings
+---@diagnostic disable-next-line: undefined-global
+local game = game
+---@diagnostic disable-next-line: undefined-global
+local remote = remote
+---@diagnostic disable-next-line: undefined-global
+local defines = defines
+
 local Storage = require('lib.ds.storage')
 local PlayerData = require('lib.ds.player_data')
 local SurfaceData = require('lib.ds.surface_data')
 local Favorite = require('lib.ds.favorite')
 local wutils = require('lib.wutils')
 local CommonGUI = require('gui.common_gui')
+local data_helpers = require('lib.data_helpers')
 
 local GUI_NAMES = {
     favorites_bar = 'ftt_favorites_bar',
@@ -111,6 +123,7 @@ function FavoritesGUI.open(player)
 
     -- Add slot buttons
     for i = 1, slot_count do
+        local player_data = player_data -- ensure local scope for static analysis
         local fav = player_data.favorites and player_data.favorites[i]
         slots_container.add{
             type = 'sprite-button',
@@ -204,12 +217,16 @@ function FavoritesGUI.handle_event(event)
                 if pdata and pdata.favorites and pdata.favorites[slot_num] then
                     local fav = pdata.favorites[slot_num].favorite
                     if fav and fav.pos_string then
+                        local pos = data_helpers.pos_string_to_map_position(fav.pos_string)
+                        if pos then
+                        player.teleport(pos, player.physical_surface_index)
                         -- Call teleport utility (to be implemented)
                         if remote.interfaces["ftt_teleport"] and remote.interfaces["ftt_teleport"].teleport_to then
                             remote.call("ftt_teleport", "teleport_to", player.index, fav.pos_string)
                         else
                             player.print{"ftt.teleport_not_implemented"}
                         end
+                    end
                     else
                         player.print{"ftt.no_favorite_in_slot", slot_num}
                     end
@@ -220,7 +237,7 @@ function FavoritesGUI.handle_event(event)
             if remote.interfaces["ftt_editor_gui"] and remote.interfaces["ftt_editor_gui"].open_for_favorite then
                 remote.call("ftt_editor_gui", "open_for_favorite", player.index, slot_num)
             else
-                player.print{"ftt.editor_not_implemented"}
+                player.print("ftt.editor_not_implemented")
             end
         end
         return
@@ -235,6 +252,8 @@ function FavoritesGUI.handle_event(event)
             local bar = FavoritesGUI.get_bar(player)
             if bar then
                 local slots_container = bar['ftt_favorites_bar_border']['ftt_favorites_bar_row']['ftt_slots_container']
+                -- Ensure player_data is available
+                local player_data = global and global.ftt_storage and global.ftt_storage.players and global.ftt_storage.players[player.index]
                 for i, child in pairs(slots_container.children) do
                     if i == from_slot then
                         child.style = DRAGGING_STYLE
@@ -244,7 +263,7 @@ function FavoritesGUI.handle_event(event)
                         child.tooltip = {'ftt.favorite_slot_tooltip_drop_target', i}
                     else
                         child.style = 'ftt_favorite_slot_btn'
-                        child.tooltip = FavoritesGUI.get_slot_tooltip(player_data.favorites and player_data.favorites[i], i)
+                        child.tooltip = FavoritesGUI.get_slot_tooltip(player_data and player_data.favorites and player_data.favorites[i], i)
                     end
                 end
             end

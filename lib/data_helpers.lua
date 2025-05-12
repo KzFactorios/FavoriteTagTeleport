@@ -1,3 +1,8 @@
+---@diagnostic disable-next-line: undefined-global
+local remote = remote
+
+local settings_manager = require("settings.settings_manager")
+
 ---@param pos {x: number, y: number}
 ---@return string
 local function map_position_to_pos_string(pos)
@@ -19,11 +24,7 @@ end
 ---@param icon string
 ---@return string
 local function get_valid_icon(icon)
-  if remote and remote.interfaces and remote.interfaces["__core__"] and remote.interfaces["__core__"].is_valid_sprite_path then
-    if remote.call("__core__", "is_valid_sprite_path", icon) then
-      return icon
-    end
-  end
+  -- TODO implement validity
   return "generic_marker.png"
 end
 
@@ -74,6 +75,88 @@ local function remove_ext_tag(surface_data, pos_string)
   end
 end
 
+--- evaluates player surface and determines if player is in space
+local function is_on_space_platform(player)
+  if not player then return false end
+  if not player.surface then return false end
+  if not player.surface.map_gen_settings then return false end
+
+  -- Planets have either default/custom terrain gen or specific planet presets
+  local map_gen = player.surface.map_gen_settings
+  return map_gen.preset == "space-platform" or map_gen.preset == "space"
+end
+
+-- Have we selected a point that is not in the fog of war?
+local function position_can_be_tagged(position, player)
+  if not player then return false end
+
+  local chunk_position = {
+    x = math.floor(position.x / 32),
+    y = math.floor(position.y / 32)
+  }
+  return player.force.is_chunk_charted(player.physical_surface_index, chunk_position)
+end
+
+---@param player LuaPlayer
+---@param target_position {x:number, y:number}
+local function teleport_player(player, target_position)
+  if not player then return nil, "" end
+  if not player.character then return nil, "" end
+
+  --[[if map_tag_utils.is_on_space_platform(player) then
+    return nil,
+        "The surgeon general has determined that teleportation on space platforms may incur death and is not authorized!"
+  end]]
+
+  --context.qmtt.player_data[player.index].render_mode = player.render_mode
+  local surface = player.physical_surface
+  local return_pos = nil
+  local return_msg =
+  "No valid teleport position found within the teleport radius. Please select another location or you could try increasing the search radius in settings. The hive mind discourages this practice as it will reduce the accuracy of your teleport landing points."
+
+  local settings = settings_manager.get_player_settings(player)
+  local teleport_radius = tonumber(settings.teleport_radius)
+  local min_radius = settings.TELEPORT_RADIUS_MIN and settings.TELEPORT_RADIUS_MIN.value and tonumber(settings.TELEPORT_RADIUS_MIN.value) or 0
+  local max_radius = settings.TELEPORT_RADIUS_MAX and settings.TELEPORT_RADIUS_MAX.value and tonumber(settings.TELEPORT_RADIUS_MAX.value) or 0
+
+  -- Ensure teleport_radius is a valid number
+  if not teleport_radius then
+    teleport_radius = min_radius
+  end
+
+  if teleport_radius < min_radius then
+    teleport_radius = min_radius
+  elseif max_radius > 0 and teleport_radius > max_radius then
+    teleport_radius = max_radius
+  end
+
+  -- Find a non-colliding position near the target position
+  local closest_position = surface.find_non_colliding_position(
+    player.character.name, -- Prototype name of the player's character
+    target_position,       -- Target position to search around
+    teleport_radius,       -- Search radius in tiles
+    6                      -- Precision (smaller values = more precise, but slower) Range 0.01 - 8
+  -- fastest but coarse, use 2-4
+  -- balanced, use 6
+  -- high precision, slowest, use 8
+  )
+
+  if closest_position then
+    local valid = player.physical_surface.can_place_entity("character", closest_position)
+
+    -- If a position is found, teleport the player there
+    if valid then
+      if player.teleport(closest_position, player.physical_surface, true) then
+        return_pos = closest_position
+        return_msg = ""
+        -- note that caller is currently handling raising of teleport event
+      end
+    end
+  end
+
+  return return_pos, return_msg
+end
+
 return {
   map_position_to_pos_string = map_position_to_pos_string,
   pos_string_to_map_position = pos_string_to_map_position,
@@ -83,5 +166,8 @@ return {
   add_chart_tag = add_chart_tag,
   remove_chart_tag = remove_chart_tag,
   add_ext_tag = add_ext_tag,
-  remove_ext_tag = remove_ext_tag
+  remove_ext_tag = remove_ext_tag,
+  teleport_player = teleport_player,
+  is_on_space_platform = is_on_space_platform,
+  position_can_be_tagged - position_can_be_tagged
 }

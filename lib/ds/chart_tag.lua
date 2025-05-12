@@ -3,7 +3,7 @@
 ---@field icon string           -- Sprite path for icon
 ---@field text string           -- Tag text
 ---@field last_user LuaPlayer   -- Last editing player
----@field tag_number uint       -- Unique tag number
+---@field tag_number number       -- Unique tag number
 ---@field surface LuaSurface    -- Surface reference
 ---@field valid boolean         -- Validity flag
 local ChartTag = {}

@@ -19,8 +19,9 @@ local CommonGUI = {}
 --- Safely destroys a GUI element if it exists
 ---@param element LuaGuiElement|nil
 function CommonGUI.safe_destroy(element)
-    if element and element.valid then
-        element.destroy()
+    if element and type(element) == "LuaGuiElement"
+    and element.valid then
+        element:destroy()
     end
 end
 

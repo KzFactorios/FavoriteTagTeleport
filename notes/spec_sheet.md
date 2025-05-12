@@ -24,28 +24,26 @@ A Factorio mod that enhances map tag management and teleportation, providing a f
 - Initializes and updates GUIs for all players.
 
 ### 2. GUI Modules
-- **`gui/favorites_GUI.lua`**: Handles displaying the current favorites for the current surface. Handles events triggered by slot interaction - right-click, left-click. Implement drag and drop within the favorites bar to order and reorder favorites
-- **`gui/editor_GUI.lua`**: Manages a GUI to add and update map tags.
+- **`favorites_GUI.lua`**: Handles displaying the current favorites for the current surface. Handles events triggered by slot interaction - right-click, left-click. Implement drag and drop within the favorites bar to order and reorder favorites
+- **`editor_GUI.lua`**: Manages a GUI to add and update map tags.
 
 
-### 3. `lib/context.lua`
+### 3. `context.lua`
 - **Persistent data storage and schema management.**
 - Replaces legacy `storage` module.
 - Provides player data access, inits all data structures
 
-### 4. 'lib/favorite.lua'
+### 4. 'favorite.lua'
 - Handles favorites management
 
-### 5. `scripts/event_handlers/custom_input_event_handler.lua`
+### 5. `custom_input_event_handler.lua`
 - Handles custom input events (hotkeys, GUI triggers).
 
-### 6. `utils/map_tag_utils.lua`
-- Utility functions for map tag position, collision, and teleportation logic.
 
-### 7. `settings/constants.lua` and `settings/add_tag_settings.lua`
+### 7. `constants.lua` and `add_tag_settings.lua`
 - Defines mod constants, event names, and per-player settings.
 
-### 8. `lib/ext_tag.lua
+### 8. `ext_tag.lua
 - relates to chart_tags and provides for handling extended details
 
 ### 9. the "migrations" folder

@@ -1,3 +1,18 @@
+---@diagnostic disable-next-line: undefined-global
+local game = game
+---@diagnostic disable-next-line: undefined-global
+local global = global
+---@diagnostic disable-next-line: undefined-global
+local settings = settings
+---@diagnostic disable-next-line: undefined-global
+local remote = remote
+---@diagnostic disable-next-line: undefined-global
+local script = script
+---@diagnostic disable-next-line: undefined-global
+local defines = defines
+---@diagnostic disable-next-line: undefined-global
+local PREFIX = require("settings/constants").PREFIX
+
 -- Factorio mod: FavoriteTagTeleport - control.lua
 -- Main entry point for event registration and mod lifecycle
 local Storage = require('lib.ds.storage')
@@ -9,22 +24,22 @@ local storage = Storage
 local _startup = 0
 
 -- Factorio lifecycle events
-function on_init()
+local function on_init()
     storage:on_init()
     -- TODO: Initialize GUIs, register GUI handlers, set up player GUIs, etc.
 end
 
-function on_load()
+local function on_load()
     -- TODO: Rebuild GUI lookup tables, re-register event handlers if needed
 end
 
-function on_configuration_changed(event)
+local function on_configuration_changed(event)
     -- TODO: Handle mod upgrades, migration, and player re-initialization
 end
 
 --- Handle mod settings changes
-function on_runtime_mod_setting_changed(event)
-    if not event then return end
+local function on_runtime_mod_setting_changed(event)
+    if not event or not game then return end
     -- .player_index is optional in the API but we need the player index in our logic
     if not event.player_index then return end
 
@@ -32,7 +47,7 @@ function on_runtime_mod_setting_changed(event)
     if not player then return end
 
     local setting_name = event.setting
-    local setting_type = event.setting_type
+    local setting_type
 
     if setting_type == "runtime-per-user" and setting_name == PREFIX .. "favorites-on" then
         --control.apply_favorites_on_off_state(player)
@@ -40,7 +55,7 @@ function on_runtime_mod_setting_changed(event)
     end
 end
 
-function on_first_tick(event)
+local function on_first_tick(event)
     if _startup == 0 then
         for _, player in pairs(game.players) do
             if not player then break end
@@ -56,14 +71,14 @@ function on_first_tick(event)
 end
 
 -- Player events
-function on_player_created(event)
+local function on_player_created(event)
     local player = game.get_player(event.player_index)
     if player then
         FavoritesGUI.open(player)
     end
 end
 
-function on_player_joined_game(event)
+local function on_player_joined_game(event)
     local player = game.get_player(event.player_index)
     if player then
         FavoritesGUI.open(player)
@@ -74,30 +89,31 @@ end
 --- such as moving from character control to god mode, spectator mode,
 --- or any other available controller type in the game
 --- ie: fave bar should only show in game mode
-function on_player_controller_changed(event)
+local function on_player_controller_changed(event)
+    -- TODO: react to player controller changes
 end
 
 --- This addresses an error that was happening with the inclusion
 --- of map_tag_editor (I think)
-function on_player_changed_force(event)
+local function on_player_changed_force(event)
     if not game then return end
     local player = game.get_player(event.player_index)
     if not player then return end
     -- implemented to handle EditorExtensions incompat? 1/20/2025
-    local res = pcall(surface_data.reset_chart_tags(), player)
+    local result = pcall(surface_data.reset_chart_tags, player)
 end
 
-function on_player_left_game(event)
+local function on_player_left_game(event)
     -- TODO: Handle player leaving (cleanup if needed)
 end
 
-function on_player_removed(event)
+local function on_player_removed(event)
     -- TODO: Remove player data from storage
 end
 
 --- React to changes from the stock editor. update chart and ext tags
 --- Chart tag events
-function on_chart_tag_removed(event)
+local function on_chart_tag_removed(event)
     --qmtt.handle_chart_tag_removal(event)
 end
 
@@ -107,12 +123,13 @@ script.on_event(defines.events.on_chart_tag_added, function(event)
   qmtt.handle_chart_tag_added(event)
 end)]]
 
-function on_chart_tag_modified(event)
+
+local function on_chart_tag_modified(event)
     --qmtt.handle_chart_tag_modified(event)
 end
 
 -- Custom input events (hotkeys, GUI triggers)
-function on_teleport(event)
+local function on_teleport(event)
     -- TODO: Handle custom input events
 end
 
@@ -173,7 +190,7 @@ end]]
 
 -- Utility: Debug print if __DEBUG__ is enabled
 local function debug_print(msg)
-    if storage.__DEBUG__ then
+    if game and storage.__DEBUG__ then
         game.print('[FTT DEBUG] ' .. tostring(msg))
     end
 end

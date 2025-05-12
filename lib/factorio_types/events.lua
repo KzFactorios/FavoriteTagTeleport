@@ -1,0 +1,7 @@
+---@class EventData
+---@field name string  -- The event ID
+---@field tick uint  -- The game tick the event was generated
+---@field player_index uint  -- The index of the player who triggered the event
+---@field element LuaGuiElement  -- The GUI element involved in the event
+---@field surface LuaSurface  -- The surface involved in the event
+-- Add more fields as needed for your events

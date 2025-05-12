@@ -58,7 +58,7 @@ function EditorGUI.refresh(player)
 end
 
 --- Handles GUI events (button clicks, text changes, etc.)
----@param event EventData.on_gui_click|EventData.on_gui_text_changed|... 
+---@param event EventData  -- Use the generic EventData type for flexibility
 function EditorGUI.handle_event(event)
     -- TODO: Route events to the correct handler based on element name
 end
