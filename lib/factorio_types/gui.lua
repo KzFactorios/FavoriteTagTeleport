@@ -1,41 +1,43 @@
+---@class Position
+---@field x number
+---@field y number
+
+---@class LuaGui
+---@field player LuaPlayer Parent player who owns this GUI
+---@field center LuaGuiElement
+---@field left LuaGuiElement
+---@field top LuaGuiElement
+---@field goal LuaGuiElement
+---@field screen LuaGuiElement
+---@field relative LuaGuiElement
+
 ---@class LuaGuiElement
----@field valid boolean  -- Whether the GUI element is valid
----@field destroy fun(self: LuaGuiElement)  -- Destroys the GUI element
----@class LuaGuiElementChildren
----@class LuaGuiElementStyle
----@class LuaGuiElementType
----@class LuaGuiElementName
----@class LuaGuiElementTags
----@class LuaGuiElementIndex
----@class LuaGuiElementParent
----@class LuaGuiElementRoot
----@class LuaGuiElementDirection
----@class LuaGuiElementState
----@class LuaGuiElementTooltip
----@class LuaGuiElementSprite
----@class LuaGuiElementText
----@class LuaGuiElementNumber
----@class LuaGuiElementBoolean
----@class LuaGuiElementSignal
----@class LuaGuiElementColor
----@class LuaGuiElementDropdown
----@class LuaGuiElementSlider
----@class LuaGuiElementProgressBar
----@class LuaGuiElementTextBox
----@class LuaGuiElementTextField
----@class LuaGuiElementButton
----@class LuaGuiElementCheckbox
----@class LuaGuiElementRadioButton
----@class LuaGuiElementSwitch
----@class LuaGuiElementTab
----@class LuaGuiElementTabPane
----@class LuaGuiElementTable
----@class LuaGuiElementScrollPane
----@class LuaGuiElementDropDown
----@class LuaGuiElementListBox
----@class LuaGuiElementLine
----@class LuaGuiElementSpriteButton
----@class LuaGuiElementCamera
----@class LuaGuiElementMinimap
----@class LuaGuiElementChooseElemButton
----@class LuaGuiElementEntityPreview
+---@field valid boolean Whether this object is valid
+---@field name string The name of this element
+---@field type string The type of this element
+---@field caption string|table|nil The caption shown by this element
+---@field tooltip string|table|nil The tooltip shown when hovering over this element
+---@field enabled boolean Whether this element is enabled
+---@field visible boolean Whether this element is visible
+---@field style string|table The style of this element
+---@field sprite string|nil The sprite shown by this element
+---@field direction "horizontal"|"vertical"|nil The direction for flow elements
+---@field tags table|nil Tags associated with this element
+---@field parent LuaGuiElement|nil The parent of this element
+---@field children table<string, LuaGuiElement> Children of this element
+---@field gui LuaGui The LuaGui that this element belongs to
+---@field index integer|nil The index in the parent's children list
+---@field destroy function Destroys this element and all its children
+---@field add function Adds a child element
+---@field clear function Removes all children
+
+---@alias GuiElementType
+---| "button"
+---| "sprite-button"
+---| "flow"
+---| "frame"
+---| "label"
+---| "textfield"
+---| "progressbar"
+---| "slider"
+---| "sprite"

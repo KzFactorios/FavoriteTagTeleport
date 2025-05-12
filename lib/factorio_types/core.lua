@@ -1,3 +1,5 @@
+---@alias PlayerIdentification LuaPlayer|integer|string
+
 ---@class LuaPlayer
 ---@field gui table<string, any>  -- GUI roots (top, left, center, etc.)
 ---@field index integer

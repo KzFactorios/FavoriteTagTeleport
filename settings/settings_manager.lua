@@ -1,5 +1,5 @@
 ---@class SettingsManager
----@field get_player_settings fun(player: LuaPlayer): table<string, {value: number|string}>
+---@field get_player_settings fun(player: LuaPlayer):{teleport_radius: number, favorites_on: boolean, destination_msg_on: boolean, slots: number}
 ---@field get_setting fun(player: LuaPlayer, setting_name: string): any
 ---@field TELEPORT_RADIUS_DEFAULT number
 ---@field TELEPORT_RADIUS_MIN number
@@ -12,41 +12,30 @@ SettingsManager.TELEPORT_RADIUS_MAX = 50
 
 --- Retrieves the player settings for a given player.
 ---@param player LuaPlayer
----@return table<string, {value: any}>
+---@return {teleport_radius: number, favorites_on: boolean, destination_msg_on: boolean, slots: number}
 function SettingsManager.get_player_settings(player)
     if not player then
         return {
-            teleport_radius = 8,
+            teleport_radius = SettingsManager.TELEPORT_RADIUS_DEFAULT,
             favorites_on = true,
             destination_msg_on = true,
+            slots = 10,
         }
     end
 
-    local constants = require(settings.constants)
+    local constants = require('settings.constants') -- Fixed require statement
     local PREFIX = constants.PREFIX
 
-    local t_radius = SettingsManager.TELEPORT_RADIUS_DEFAULT
-    if player.mod_settings[PREFIX .. "teleport-radius"] and
-        player.mod_settings[PREFIX .. "teleport-radius"].value ~= nil then
-        t_radius = player.mod_settings[PREFIX .. "teleport-radius"].value
-    end
-
-    local favorites_on = true
-    if player.mod_settings[PREFIX .. "favorites-on"] and
-        player.mod_settings[PREFIX .. "favorites-on"].value ~= nil then
-        favorites_on = player.mod_settings[PREFIX .. "favorites-on"].value
-    end
-
-    local destination_msg_on = true
-    if player.mod_settings[PREFIX .. "destination-msg-on"] and
-        player.mod_settings[PREFIX .. "destination-msg-on"].value ~= nil then
-        destination_msg_on = player.mod_settings[PREFIX .. "destination-msg-on"].value
-    end
+    local t_radius = tonumber(player.mod_settings[PREFIX .. "teleport-radius"] and player.mod_settings[PREFIX .. "teleport-radius"].value) or SettingsManager.TELEPORT_RADIUS_DEFAULT
+    local favorites_on = (player.mod_settings[PREFIX .. "favorites-on"] and player.mod_settings[PREFIX .. "favorites-on"].value) ~= nil and player.mod_settings[PREFIX .. "favorites-on"].value or true
+    local destination_msg_on = (player.mod_settings[PREFIX .. "destination-msg-on"] and player.mod_settings[PREFIX .. "destination-msg-on"].value) ~= nil and player.mod_settings[PREFIX .. "destination-msg-on"].value or true
+    local slots = tonumber(player.mod_settings[PREFIX .. "slots"] and player.mod_settings[PREFIX .. "slots"].value) or 10
 
     local settings = {
         teleport_radius = t_radius,
         favorites_on = favorites_on,
         destination_msg_on = destination_msg_on,
+        slots = slots,
     }
 
     return settings

@@ -1,3 +1,6 @@
+---@diagnostic disable-next-line: undefined-global
+local data = data
+
 local constants = require("settings/constants")
 local PREFIX = constants.PREFIX
 
@@ -13,7 +16,8 @@ data:extend {
     name = constants.events.CLOSE_WITH_TOGGLE_MAP,
     type = "custom-input",
     key_sequence = "",
-    linked_game_control = "toggle-map"
+    --TODO is this necessary? what does it do? 
+    --linked_game_control = "toggle-map"
   },
   {
     type = "custom-input",

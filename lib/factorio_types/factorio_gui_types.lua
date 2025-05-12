@@ -1,0 +1,17 @@
+-- Factorio GUI type definitions
+---@class FTTGuiSpec
+---@field type string The type of GUI element to create
+---@field name string The name of this GUI element
+---@field caption? string|table Optional caption text or rich text table
+---@field tooltip? string|table Optional tooltip text or rich text table
+---@field style? string Optional style name
+---@field direction? "horizontal"|"vertical" Flow direction for flow elements
+---@field sprite? string Optional sprite path for sprite elements
+---@field enabled? boolean Whether the element is enabled
+---@field visible? boolean Whether the element is visible
+---@field index? integer Position in parent's children
+
+---@class GuiUtil
+---@field create_favorite_slot fun(container: LuaGuiElement, favorite: table|nil, slot_index: integer)
+---@field create_favorites_bar fun(parent: LuaGuiElement): LuaGuiElement
+---@field create_frame fun(parent: LuaGuiElement, name: string, direction?: "horizontal"|"vertical"): LuaGuiElement

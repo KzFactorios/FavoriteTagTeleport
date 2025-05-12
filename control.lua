@@ -26,6 +26,14 @@ local _startup = 0
 -- Factorio lifecycle events
 local function on_init()
     storage:on_init()
+    -- Ensure global is initialized before setting up ftt_storage
+    global = global or {}
+    global.ftt_storage = global.ftt_storage or { players = {} }
+
+    -- Ensure context.storage is initialized
+    if not storage.players then
+        storage.players = {}
+    end
     -- TODO: Initialize GUIs, register GUI handlers, set up player GUIs, etc.
 end
 
@@ -56,34 +64,25 @@ local function on_runtime_mod_setting_changed(event)
 end
 
 local function on_first_game_tick(event)
-    if game then
-        if _startup == 0 then
-            for _, player in pairs(game.players) do
-                if not player then break end
-                --TODO what to do on startup
-            end
-
-            _startup = 1
-            return
-        end
-
+    for _, player in pairs(game.players) do
+        if not player then break end
+        --TODO what to do on startup
+    end
+    if not _startup then
         script.on_event(defines.events.on_tick, nil)
+        _startup = 1
     end
 end
 
 -- Player events
 local function on_player_created(event)
     local player = game.get_player(event.player_index)
-    if player then
-        FavoritesGUI.open(player)
-    end
+    FavoritesGUI.open(player)
 end
 
 local function on_player_joined_game(event)
     local player = game.get_player(event.player_index)
-    if player then
-        FavoritesGUI.open(player)
-    end
+    FavoritesGUI.open(player)
 end
 
 --- This occurs when a player switches between different controller modes,
@@ -121,7 +120,7 @@ end
 --TODO decide if this is necessary to handle stock editor and/or should
 --- handle mod's additions for consistency
 local function on_chart_tag_added(event)
-  -- TODO: ensure that a matching ext_tag is created?
+    -- TODO: ensure that a matching ext_tag is created?
 end
 
 
@@ -138,18 +137,18 @@ end
 script.on_init(on_init)
 script.on_load(on_load)
 script.on_configuration_changed(on_configuration_changed)
-script.on_event(defines.events.on_player_created, on_player_created)
-script.on_event(defines.events.on_player_controller_changed, on_player_controller_changed)
-script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
-script.on_event(defines.events.on_tick, on_first_game_tick)
-script.on_event(defines.events.on_player_left_game, on_player_left_game)
-script.on_event(defines.events.on_player_removed, on_player_removed)
-script.on_event(defines.events.on_chart_tag_added, on_chart_tag_added)
-script.on_event(defines.events.on_chart_tag_removed, on_chart_tag_removed)
-script.on_event(defines.events.on_chart_tag_modified, on_chart_tag_modified)
-script.on_event(defines.events.on_runtime_mod_setting_changed, on_runtime_mod_setting_changed)
+script.on_event("on_player_created", on_player_created)
+script.on_event("on_player_controller_changed", on_player_controller_changed)
+script.on_event("on_player_changed_force", on_player_changed_force)
+script.on_event("on_tick", on_first_game_tick)
+script.on_event("on_player_left_game", on_player_left_game)
+script.on_event("on_player_removed", on_player_removed)
+script.on_event("on_chart_tag_added", on_chart_tag_added)
+script.on_event("on_chart_tag_removed", on_chart_tag_removed)
+script.on_event("on_chart_tag_modified", on_chart_tag_modified)
+script.on_event("on_runtime_mod_setting_changed", on_runtime_mod_setting_changed)
 -- Register custom input events as needed
-script.on_event(defines.events.script_raised_teleported, on_teleport)
+script.on_event("script_raised_teleported", on_teleport)
 
 -- Register GUI events
 script.on_event(defines.events.on_gui_click, FavoritesGUI.handle_event)
@@ -166,10 +165,8 @@ script.on_event(defines.events.on_gui_location_changed, function(event)
         -- (Implement order update and refresh bar)
         -- You may want to store drag state in global or player table
         -- For now, just refresh the bar
-        local player = game.get_player(event.player_index)
-        if player then
-            FavoritesGUI.refresh(player)
-        end
+        local player = game.get_player(event.player_index)        
+        FavoritesGUI.refresh(player)
     end
 end)
 

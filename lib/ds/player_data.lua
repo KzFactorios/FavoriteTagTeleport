@@ -1,79 +1,61 @@
----@class PlayerData
+---@class PlayerDataInstance
 ---@field favorites table<integer, {slot_locked: boolean, favorite: Favorite}>
+---@field surfaces table<integer, any>
 ---@field show_fave_bar_buttons boolean
 ---@field render_mode string
+---@field remove_favorite fun(self: PlayerDataInstance, slot_number: integer)
+---@field set_show_fave_bar_buttons fun(self: PlayerDataInstance, show: boolean)
+---@field get_favorite_by_slot fun(self: PlayerDataInstance, slot_number: integer): table|nil
+---@field get_show_fave_bar_buttons fun(self: PlayerDataInstance): boolean
+---@field set_render_mode fun(self: PlayerDataInstance, mode: string)
+---@field get_render_mode fun(self: PlayerDataInstance): string
+---@field set_favorite fun(self: PlayerDataInstance, slot_number: integer, favorite: Favorite, slot_locked: boolean?)
+
+---@class PlayerData
+---@field new fun(): PlayerDataInstance
 local PlayerData = {}
 
+---Create a new PlayerData instance
+---@return PlayerDataInstance
 function PlayerData.new()
-    return {
+    local instance = {
         favorites = {},
         surfaces = {},
         show_fave_bar_buttons = false,
-        render_mode = defines.render_mode.game,
-        remove_favorite = function() end,
-        set_show_fave_bar_buttons = function() end,
-        get_favorite_by_slot = function() end,
-        get_show_fave_bar_buttons = function() end,
-        set_render_mode = function() end,
-        get_render_mode = function() end,
-        set_favorite = function() end
+        render_mode = defines.render_mode.game
     }
-end
-
---- Gets the favorite entry for a given slot number
----@param self PlayerData
----@param slot_number integer
----@return table|nil
-function PlayerData:get_favorite_by_slot(slot_number)
-  if not self.favorites then return nil end
-  return self.favorites[slot_number]
-end
-
---- Sets the favorite entry for a given slot number
----@param self PlayerData
----@param slot_number integer
----@param favorite Favorite
----@param slot_locked boolean?
-function PlayerData:set_favorite(slot_number, favorite, slot_locked)
-  if not self.favorites then self.favorites = {} end
-  self.favorites[slot_number] = { slot_locked = slot_locked or false, favorite = favorite }
-end
-
---- Removes the favorite entry for a given slot number
----@param self PlayerData
----@param slot_number integer
-function PlayerData:remove_favorite(slot_number)
-  if self.favorites then
-    self.favorites[slot_number] = nil
-  end
-end
-
---- Gets the show_fave_bar_buttons value
----@param self PlayerData
----@return boolean
-function PlayerData:get_show_fave_bar_buttons()
-  return self.show_fave_bar_buttons
-end
-
---- Sets the show_fave_bar_buttons value
----@param self PlayerData
----@param value boolean
-function PlayerData:set_show_fave_bar_buttons(value)
-  self.show_fave_bar_buttons = value
-end
-
---- Gets the render_mode value
----@param self PlayerData
----@return string
-function PlayerData:get_render_mode()
-  return self.render_mode
-end
-
---- Sets the render_mode value
----@param self PlayerData
----@param value string
-function PlayerData:set_render_mode(value)
-  self.render_mode = value
+    
+    function instance:remove_favorite(slot_number)
+        if type(slot_number) == "number" then
+            self.favorites[slot_number] = nil
+        end
+    end
+    
+    function instance:set_show_fave_bar_buttons(show)
+        self.show_fave_bar_buttons = show
+    end
+    
+    function instance:get_favorite_by_slot(slot_number)
+        return self.favorites[slot_number]
+    end
+    
+    function instance:get_show_fave_bar_buttons()
+        return self.show_fave_bar_buttons
+    end
+    
+    function instance:set_render_mode(mode)
+        self.render_mode = mode
+    end
+    
+    function instance:get_render_mode()
+        return self.render_mode
+    end
+    
+    function instance:set_favorite(slot_number, favorite, slot_locked)
+        self.favorites[slot_number] = { slot_locked = slot_locked or false, favorite = favorite }
+    end
+    
+    return instance
 end
 
 return PlayerData
